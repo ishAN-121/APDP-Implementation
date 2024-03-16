@@ -1,0 +1,40 @@
+{
+    "uid": "5",
+    "description": "This policy allows a user to perform all actions on all resources if the user's age is less than 38 and greater than or equal to 18, height is less than 60 and greater than or equal to 40, income is less than 120 and greater than or equal to 100, experience is less than 20 and greater than or equal to 0, method is create, delete or get and the IP address is",
+    "effect": "allow",
+    "rules": {
+        "subject":  {
+            "$.age": {
+                "condition": "AllOf", 
+                "values": [
+                            {"condition": "Lt", "value": 38},
+                            {"condition": "Gte", "value": 18}
+                            ]},
+                "$.height": {
+                    "condition": "AllOf", 
+                    "values": [
+                        {"condition": "Lt", "value": 60},
+                        {"condition": "Gte", "value": 40}
+                            ]},
+                "$.income": {
+                    "condition": "AllOf", 
+                    "values": [
+                        {"condition": "Lt", "value": 120},
+                        {"condition": "Gte", "value": 100}
+                                        ]},
+                "$.experience": {
+                    "condition": "AllOf", 
+                    "values": [
+                        {"condition": "Lt", "value": 20},
+                        {"condition": "Gte", "value": 0}
+                            ]}    
+            },
+        "resource": {"$.name": {"condition": "RegexMatch", "value": ".*"}},
+        "action": [{"$.method": {"condition": "Equals", "value": "create"}},
+                   {"$.method": {"condition": "Equals", "value": "delete"}},
+                   {"$.method": {"condition": "Equals", "value": "get"}}],
+        "context": {"$.ip": {"condition": "CIDR", "value": "127.0.0.1/32"}}
+    },
+    "targets": {},
+    "priority": 0
+}
