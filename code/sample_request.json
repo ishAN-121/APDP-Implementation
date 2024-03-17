@@ -5,7 +5,8 @@
             "age": 25,
             "height" : 50,
             "income" : 119,
-            "experience" : 15
+            "experience" : 15,
+            "rank" : 5
         }
     },
     "resource": {
