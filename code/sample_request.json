@@ -11,7 +11,7 @@
     },
     "resource": {
         "id": "", 
-        "attributes": {"name": "myrn:example.com:resource:123"}
+        "attributes": {"name": "123"}
     },
      "action": {
          "id": "", 
