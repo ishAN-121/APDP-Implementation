@@ -1,5 +1,5 @@
 {
-    "uid": "6",
+    "uid": "1",
     "description": "This policy allows a user to perform all actions on all resources if the user's age is less than 38 and greater than or equal to 18, height is less than 60 and greater than or equal to 40, income is less than 120 and greater than or equal to 100, experience is less than 20 and greater than or equal to 0, method is create, delete or get and the IP address is",
     "effect": "allow",
     "rules": {
@@ -36,9 +36,7 @@
                             ]}    
             },
         "resource": {"$.name": {"condition": "RegexMatch", "value": ".*"}},
-        "action": [{"$.method": {"condition": "Equals", "value": "create"}},
-                   {"$.method": {"condition": "Equals", "value": "delete"}},
-                   {"$.method": {"condition": "Equals", "value": "get"}}],
+        "action": [{"$.method": {"condition": "Equals", "value": "get"}}],
         "context": {"$.ip": {"condition": "CIDR", "value": "127.0.0.1/32"}}
     },
     "targets": {},

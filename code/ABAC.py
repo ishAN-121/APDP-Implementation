@@ -9,11 +9,7 @@ import json
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-#define attribute types
-# MAX = 0
-# MIN = 1
-# INTERMEDIATE = 2
-# INTERVAL = 3
+database = "test-database"
 
 start = time.time()
 
@@ -25,7 +21,7 @@ policy = Policy.from_json(policy_json)
 client = MongoClient()
 storage = MongoStorage(client)
 
-#storage.add(policy)
+# storage.add(policy)
 # storage.delete("5")
 pdp = PDP(storage)
 
@@ -44,58 +40,59 @@ t.calc()
 
 end = time.time()
 print("Precomputations took: ", end - start)
-number_of_iterations = [1]
+number_of_iterations = [10]
 total_time = 0
 errors = []
 rmse_values = [] 
 avg_time = []
 
-# for j in number_of_iterations:
-#     for i in range(j):
-start = time.time()
-with open('sample_request.json', 'r') as file:
-    request_json = json.load(file)
+for j in number_of_iterations:
+    for i in range(j):
+        start = time.time()
+        with open('sample_request.json', 'r') as file:
+            request_json = json.load(file)
 
-user_attributes = []
+        user_attributes = []
 
-request = AccessRequest.from_json(request_json)
-for k,v in request.subject.items():
-    user_attributes.append(v)
+        request = AccessRequest.from_json(request_json)
+        for k,v in request.subject.items():
+            user_attributes.append(v)
 
-if pdp.is_allowed(request):
-    db = client['test-database']
-    test = db.test
-    C = t.comp_attr(user_attributes)
-    if request.action["method"] == "get":
-        document = test.find({"user_id":request.resource["name"]})
-        val = [d["value"] for d in document]
-    senstivity = 1 #difference between two datasets
-    privacy_budget = np.exp(-1*C)
-    scale_parameter = senstivity/privacy_budget
-    f_of_D_with_noise = add_laplacian_noise_to_function(val[0], scale_parameter)
-    errors.append(f_of_D_with_noise - val[0])
-    end = time.time()
-    total_time += (end - start)
-else:
-    print("Access denied")
-    exit(1)
+        if pdp.is_allowed(request):
+            db = client[database]
+            test = db.test
+            C = t.comp_attr(user_attributes)
+            if request.action["method"] == "get":
+                document = test.find({"user_id":request.resource["name"]})
+                val = [d["value"] for d in document]
+            senstivity = 1 #difference between two datasets
+            privacy_budget = np.exp(-1*C)
+            scale_parameter = senstivity/privacy_budget
+            f_of_D_with_noise = add_laplacian_noise_to_function(val[0], scale_parameter)
+            #print(f_of_D_with_noise)
+            errors.append(f_of_D_with_noise - val[0])
+            end = time.time()
+            total_time += (end - start)
+        else:
+            print("Access denied")
+            exit(1)
 
-# sns.kdeplot(errors, fill=True)
-# plt.xlabel('Values')
-# plt.ylabel('Density')
-# plt.title('Kernel Density Estimation Plot')
-# plt.show()
+    sns.kdeplot(errors, fill=True)
+    plt.xlabel('Values')
+    plt.ylabel('Density')
+    plt.title('Kernel Density Estimation Plot')
+    plt.show()
 
-print("Average time taken ", total_time)
-print("RMSE: ", rmse(errors))
-rmse_values.append(rmse(errors))
-avg_time.append(total_time)
+    print("Average time taken ", total_time/i)
+    print("RMSE: ", rmse(errors))
+    rmse_values.append(rmse(errors))
+    avg_time.append(total_time)
 
-# plt.bar(list(map(str,number_of_iterations)), rmse_values)
-# plt.xlabel('Number of iterations')
-# plt.ylabel('RMSE')
+plt.bar(list(map(str,number_of_iterations)), rmse_values)
+plt.xlabel('Number of iterations')
+plt.ylabel('RMSE')
 
-# plt.show()
+plt.show()
 
 # plt.plot(list(map(str,number_of_iterations)), avg_time)
 # plt.xlabel('Number of iterations')
