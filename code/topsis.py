@@ -70,14 +70,9 @@ class Topsis():
         self.worst_alternatives = np.zeros(self.row_size)
         self.best_alternatives = np.zeros(self.row_size)
         for i in range(self.row_size):
-            if self.criteria[i]:
-                self.worst_alternatives[i] = min(
-                    self.normalized_decision[i,:])
-                self.best_alternatives[i] = max(self.normalized_decision[i,:])
-            else:
-                self.worst_alternatives[i] = max(
-                    self.normalized_decision[i,:])
-                self.best_alternatives[i] = min(self.normalized_decision[i,:])
+            self.worst_alternatives[i] = min(
+                self.normalized_decision[i,:])
+            self.best_alternatives[i] = max(self.normalized_decision[i,:])
 
     def comp_attr(self, user_attributes):
         user_attributes = np.array(user_attributes, dtype="float")
